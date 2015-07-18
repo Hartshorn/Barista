@@ -1,15 +1,19 @@
 package Barista.src;
 
+/*
+ *******************************************
+ *  The Barista-matic!
+ */
 public class Barista {
 
     public static void main(String[] args)
     {
-      BaristaMachine baristaMachine = new BaristaMachine();
-
-      baristaMachine.initializeInventory();
-      // baristaMachine.decrementInventoryItemBy("Coffee", 3);
-      baristaMachine.listInventory();
-      // baristaMachine.resetInventory();
-      // baristaMachine.listInventory();
+          BaristaMachine baristaMachine = new BaristaMachine();
+          
+          do 
+          { 
+              baristaMachine.displayMenu();
+              
+          } while (baristaMachine.isAbleToProcessInput());
     }
 }

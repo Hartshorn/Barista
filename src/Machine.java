@@ -2,8 +2,7 @@ package Barista.src;
 
 public interface Machine {
 
+    void displayMenu();
     void listInventory();
-    void initializeInventory();
-    void resetInventory();
-    void decrementInventoryItemBy(String item, int howMany);
+    void listItemsAndAvailability();
 }

@@ -2,59 +2,153 @@ package Barista.src;
 
 import java.util.TreeMap;
 import java.util.HashMap;
+import java.util.Scanner;
+import java.util.Collections;
+import static Barista.src.BaristaConstants.*;
 
 public class BaristaMachine implements Machine {
 
-    private TreeMap<String, Integer> inventory = new TreeMap<>();
-    private HashMap<String, Double> ingredientsAndPrices = new HashMap<>(9);
-    private final Integer INIT_VALUE = 10;
-    private final Double SEVENTYFIVE = 0.75;
-    private final Double TWENTYFIVE = 0.25;
-    private final Double THIRTYFIVE = 0.35;
-    private final Double ONETEN = 1.10;
-    private final Double NINETY = 0.90;
-    private final Double ONEDOLLAR = 1.00;
+    /*
+     *  TreeMap takes comparables, so it lists string entries alphabetical by
+     *  by default. The classes that implement Drink implement Comparable
+     *  for this reason.
+     */
+    private TreeMap<String, Double[]> inventory = new TreeMap<>();
+    private TreeMap<Drink,  Double[]> drinkList = new TreeMap<>(Collections.reverseOrder());
 
-    public void initializeIngredientsAndPrices()
+    private Scanner scanner = new Scanner(System.in);
+
+
+    public BaristaMachine()
     {
-      ingredientsAndPrices.put("Coffee", SEVENTYFIVE);
-      ingredientsAndPrices.put("Decaf Coffee", SEVENTYFIVE);
-      ingredientsAndPrices.put("Sugar", TWENTYFIVE);
-      ingredientsAndPrices.put("Cream", TWENTYFIVE);
-      ingredientsAndPrices.put("Steamed Milk", THIRTYFIVE);
-      ingredientsAndPrices.put("Espresso", THIRTYFIVE);
-      ingredientsAndPrices.put("Faomed Milk", ONETEN);
-      ingredientsAndPrices.put("Cocoa", NINETY);
-      ingredientsAndPrices.put("Whipped Cream", ONEDOLLAR);
+      BaristaMachineUtil.initializeInventory(inventory);
+      BaristaMachineUtil.initailizeItemList(drinkList, inventory);
     }
+    
+    
+    @Override
+    public void displayMenu()
+    {
+        listInventory();
+        listItemsAndAvailability();
+    }
+
 
     @Override
     public void listInventory()
     {
-      for (String key: inventory.keySet()) {
-        System.out.println(key + ": " + inventory.get(key));
-      }
+        System.out.println("Inventory:\n");
+
+        for (String key: inventory.keySet()) {
+            System.out.printf("%s,%d\n\n", key,
+                BaristaMachineUtil.getInventoryAmount(key, inventory).intValue());
+        }
     }
 
-    @Override
-    public void initializeInventory()
-    {
-      for (String ingredient : ingredientsAndPrices.keySet()) {
-        inventory.add(ingredient, INIT_VALUE);
-      }
-    }
 
     @Override
-    public void resetInventory()
+    public void listItemsAndAvailability()
     {
-      for (String key: inventory.keySet()) {
-        inventory.replace(key, INIT_VALUE);
-      }
+          System.out.println("Menu:\n");
+          int menuCounter = 1;
+  
+          for (Drink drink : drinkList.keySet()) {
+  
+          System.out.printf("%d,%s,$%.2f,%b\n\n",
+                              drink.getMenuNumber(),
+                              drink.getDrinkName(),
+                              drinkList.get(drink)[INDEX_OF_PRICE],
+                              drinkList.get(drink)[INDEX_OF_AVAILABLITY] != CAN_NOT_MAKE_DRINK);
+        }
+    }
+    
+    
+    public boolean getDrink(Integer selection)
+    {
+        for (Drink drink : drinkList.keySet()) {
+            if (selection.equals(drink.getMenuNumber()) && 
+                        drinkList.get(drink)[INDEX_OF_AVAILABLITY] != CAN_NOT_MAKE_DRINK) {
+                            
+                makeDrink(drink);
+                return PROCESS_SUCCESS;
+            }
+        }
+        return PROCESS_FAILURE;
     }
 
-    @Override
-    public void decrementInventoryItemBy(String item, int howMany)
+
+    public void makeDrink(Drink drink)
     {
-      inventory.replace(item, inventory.get(item) - howMany);
+        HashMap<String, Double> ingredients = drink.getIngredients();
+    
+        for (String key : ingredients.keySet()) {
+            BaristaMachineUtil.updateInventoryEntry(key, 
+                                                    ingredients.get(key), 
+                                                    NO_CHANGE, 
+                                                    inventory);
+        }
+        
+        BaristaMachineUtil.updateDrinkList(drink, drinkList, inventory);
+    }
+    
+    
+    public boolean isAbleToProcessInput()
+    {
+        String input = scanner.nextLine().trim();
+        
+        if (BaristaMachineValidator.validateInput(input)) {
+            
+            return processInput(input);
+            
+        } else {
+            
+            System.out.println("Invalid selection: " + input);
+            return PROCESS_SUCCESS;
+        }
+    }
+    
+    
+    public boolean processInput(String input)
+    {
+        if (input.equalsIgnoreCase(QUIT)) {
+                
+            return PROCESS_FAILURE;
+            
+        } else if (input.equalsIgnoreCase(RESTOCK)) {
+            
+            BaristaMachineUtil.initializeInventory(inventory);
+            return PROCESS_SUCCESS;
+            
+        } else if (input.equalsIgnoreCase(EGG)) {
+            
+            System.out.println(EGG_OUT);
+            return PROCESS_SUCCESS;
+            
+        } else {
+            
+            Integer drinkNumber = Integer.parseInt(input);
+            
+            if(getDrink(drinkNumber)) {
+                
+                System.out.println("Dispensing: " + menuNumberResolver(drinkNumber));
+                return PROCESS_SUCCESS;
+                
+            } else {
+                
+                System.out.println("Out of stock: " + menuNumberResolver(drinkNumber));
+                return PROCESS_SUCCESS;
+            }
+        }
+    }
+    
+    
+    private String menuNumberResolver(Integer drinkNumber)
+    {
+        for (Drink drink : drinkList.keySet()) {
+            if (drinkNumber.equals(drink.getMenuNumber())) {
+                return drink.getDrinkName();
+            }
+        }
+        return "Drink not found";
     }
 }
