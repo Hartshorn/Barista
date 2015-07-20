@@ -24,8 +24,8 @@ public class BaristaMachine implements Machine {
       BaristaMachineUtil.initializeInventory(inventory);
       BaristaMachineUtil.initailizeItemList(drinkList, inventory);
     }
-    
-    
+
+
     @Override
     public void displayMenu()
     {
@@ -51,9 +51,9 @@ public class BaristaMachine implements Machine {
     {
           System.out.println("Menu:\n");
           int menuCounter = 1;
-  
+
           for (Drink drink : drinkList.keySet()) {
-  
+
           System.out.printf("%d,%s,$%.2f,%b\n\n",
                               drink.getMenuNumber(),
                               drink.getDrinkName(),
@@ -61,14 +61,14 @@ public class BaristaMachine implements Machine {
                               drinkList.get(drink)[INDEX_OF_AVAILABLITY] != CAN_NOT_MAKE_DRINK);
         }
     }
-    
-    
+
+
     public boolean getDrink(Integer selection)
     {
         for (Drink drink : drinkList.keySet()) {
-            if (selection.equals(drink.getMenuNumber()) && 
+            if (selection.equals(drink.getMenuNumber()) &&
                         drinkList.get(drink)[INDEX_OF_AVAILABLITY] != CAN_NOT_MAKE_DRINK) {
-                            
+
                 makeDrink(drink);
                 return PROCESS_SUCCESS;
             }
@@ -80,68 +80,68 @@ public class BaristaMachine implements Machine {
     public void makeDrink(Drink drink)
     {
         HashMap<String, Double> ingredients = drink.getIngredients();
-    
+
         for (String key : ingredients.keySet()) {
-            BaristaMachineUtil.updateInventoryEntry(key, 
-                                                    ingredients.get(key), 
-                                                    NO_CHANGE, 
+            BaristaMachineUtil.updateInventoryEntry(key,
+                                                    ingredients.get(key),
+                                                    NO_CHANGE,
                                                     inventory);
         }
-        
+
         BaristaMachineUtil.updateDrinkList(drink, drinkList, inventory);
     }
-    
-    
+
+
     public boolean isAbleToProcessInput()
     {
         String input = scanner.nextLine().trim();
-        
+
         if (BaristaMachineValidator.validateInput(input)) {
-            
+
             return processInput(input);
-            
+
         } else {
-            
+
             System.out.println("Invalid selection: " + input);
             return PROCESS_SUCCESS;
         }
     }
-    
-    
+
+
     public boolean processInput(String input)
     {
         if (input.equalsIgnoreCase(QUIT)) {
-                
+
             return PROCESS_FAILURE;
-            
+
         } else if (input.equalsIgnoreCase(RESTOCK)) {
-            
+
             BaristaMachineUtil.initializeInventory(inventory);
             return PROCESS_SUCCESS;
-            
+
         } else if (input.equalsIgnoreCase(EGG)) {
-            
+
             System.out.println(EGG_OUT);
             return PROCESS_SUCCESS;
-            
+
         } else {
-            
+
             Integer drinkNumber = Integer.parseInt(input);
-            
+
             if(getDrink(drinkNumber)) {
-                
+
                 System.out.println("Dispensing: " + menuNumberResolver(drinkNumber));
                 return PROCESS_SUCCESS;
-                
+
             } else {
-                
+
                 System.out.println("Out of stock: " + menuNumberResolver(drinkNumber));
                 return PROCESS_SUCCESS;
             }
         }
     }
-    
-    
+
+
     private String menuNumberResolver(Integer drinkNumber)
     {
         for (Drink drink : drinkList.keySet()) {
