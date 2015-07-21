@@ -6,7 +6,7 @@ import static com.palmer.sample.BaristaConstants.*;
  * BaristaDrinkFactory
  *
  * Author: Michael Palmer
- * 
+ *
  * 7/20/2015
  *
  * The BaristaDrinkFactory class is a factory for creating Drink objects.

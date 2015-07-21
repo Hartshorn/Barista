@@ -6,14 +6,14 @@ import java.util.HashMap;
  * BaristaDrink implements Drink, Comparable<BaristaDrink>
  *
  * Author: Michael Palmer
- * 
+ *
  * 7/20/2015
  *
  * The Drink class represents a model for a item that can be produced
- * by the Baristamatic. It contains a drinkName, a menuNumber, and a 
+ * by the Baristamatic. It contains a drinkName, a menuNumber, and a
  * recipe describing the ingredients and amounts needed. There is also
  * a flag successOrFail for use as a failsafe during creation
- * 
+ *
  * NOTE: the Drink class does not store price information - this is determined
  * at runtime dynamically, and depends on the unit cost of each ingredient
  * (which can be adjusted)
@@ -31,7 +31,7 @@ public class BaristaDrink implements Drink, Comparable<BaristaDrink> {
     {
         return this.menuNumber;
     }
-    
+
     @Override
     public void setMenuNumber(Integer menuNumber)
     {
@@ -76,7 +76,7 @@ public class BaristaDrink implements Drink, Comparable<BaristaDrink> {
 
     /*
      * By implementing Comparable, as well as overriding this method,
-     * using this class in a TreeMap structure will allow ording by name.
+     * using this class in a TreeMap structure will allow ording by drinkName.
      */
     @Override
     public int compareTo(BaristaDrink drink) {

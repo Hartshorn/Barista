@@ -26,7 +26,7 @@ public class Baristamatic {
      * The drinkList holds a Drink key whose value is the current price
      * (based on the unit cost of items in the inventory) and the availability.
      *
-     * TreMaps are used here for both the unique keys (put() works as update()),
+     * TreeMaps are used here for both the unique keys (put() works as update()),
      * and the natural ordering of comparable objects (see: Drink class);
      *
      * Ref:
@@ -40,8 +40,8 @@ public class Baristamatic {
     private static Scanner scanner = new Scanner(System.in);
 
     /*
-     * The main method is a simple loop, only used to display and prompt for
-     * input from the user.
+     * The main method initializes the machine, then displays the menu and
+     *  prompts the user for input.
      */
     public static void main(String[] args)
     {
@@ -89,11 +89,16 @@ public class Baristamatic {
         BaristaDrinkFactory drinkFactory = new BaristaDrinkFactory();
 
         for (String drinkName : DRINK_LIST) {
+
             BaristaDrink drink = drinkFactory.makeDrink(drinkName);
+
             if (drink.getSuccessOrFail()) {
+
                 Double[] drinkPriceAndIsAvailable =
                                                 getDrinkPriceAndAvail(drink);
+
                 drinkList.put(drink, drinkPriceAndIsAvailable);
+
             } else {
                 System.out.println(INITIALIZATION_ERROR);
             }
@@ -155,16 +160,19 @@ public class Baristamatic {
      *
      * NOTE: the only way to break out of the MAIN method is to enter
      * the QUIT keyword ("q" or "Q"). Invalid enteries will still return
-     * a success, providing a message and prompting for input again.
+     * a success, providing an error message and prompting for input again.
      */
     private static boolean isAbleToProcessInput()
     {
         String input = scanner.nextLine().toLowerCase().trim();
 
         if (isValidInput(input)) {
+
             boolean resultOfProcessing = processInput(input);
             return resultOfProcessing;
+
         } else {
+
             System.out.printf(INVALID_SELECTION, input);
             return PROCESS_SUCCESS;
         }
@@ -182,11 +190,20 @@ public class Baristamatic {
     {
         if (Arrays.asList(MACHINE_KEYWORDS).contains(input)) {
             return PROCESS_SUCCESS;
+
         } else {
+
             try {
+
                 Integer inputInt = Integer.parseInt(input);
-                return inputInt > 0 && inputInt <= MENU_COUNT;
+
+                if (inputInt > 0 && inputInt <= MENU_COUNT) {
+                    return PROCESS_SUCCESS;
+                } else {
+                    return PROCESS_FAILURE;
+                }
             } catch (NumberFormatException nfe) {
+
                 return PROCESS_FAILURE;
             }
         }
