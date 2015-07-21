@@ -1,0 +1,32 @@
+# Baristamatic - a solution to the Barista Problem
+#
+# Author: Michael Palmer
+#
+# Date: 07/20/2015
+#
+# This program is a solution to the Barista Problem.  Included are all sources
+# (along with the junit testing framework), and an executable .jar file.
+#
+# To RUN THE JAR FILE, change to the dist directory and run:
+
+        java -jar Baristamatic.jar
+
+# To COMPILE THE SOURCES directly, 
+# run from the Baristamatic directory (top level):
+
+        javac -cp ./lib/junit-4.12.jar -d ./bin src/*.java
+
+# To RUN THE SOURCES directly, 
+# run from the Baristamatic directory (top level):
+
+        java -cp ./bin:./lib/junit-4.12.jar com.palmer.sample.Baristamatic
+
+# To RUN THE TEST CASES directly, 
+# run from the Baristamatic directory (top level):
+
+        java -cp ./bin:./lib/junit-4.12.jar:./lib/hamcrest-core-1.3.jar com.palmer.sample.BaristaTestRunner
+
+# NOTE: to create Baristamatic.jar from the bin directoy:
+#
+        jar -cfe Baristamatic.jar com/palmer/sample/Baristamatic com/palmer/sample/*.class
+
